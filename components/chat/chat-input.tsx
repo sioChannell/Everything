@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -27,17 +25,22 @@ export function ChatInput({ onSendMessage }: ChatInputProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
-      <Textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Type your message..."
-        className="flex-1 min-h-[80px] resize-none"
-      />
-      <Button type="submit" size="icon" className="h-auto">
-        <Send className="h-4 w-4" />
-      </Button>
+    <form onSubmit={handleSubmit} className="border-t border-gray-800 p-4">
+      <div className="flex gap-4 items-center bg-gray-900 rounded-lg p-2">
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Type your message..."
+          className="flex-1 bg-transparent border-0 focus:ring-0 resize-none text-white placeholder-gray-400 text-sm min-h-[40px] max-h-[120px] py-2 px-3"
+        />
+        <button
+          type="submit"
+          className="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors"
+        >
+          <Send className="h-5 w-5" />
+        </button>
+      </div>
     </form>
   );
 }

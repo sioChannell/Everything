@@ -19,10 +19,10 @@ export function ChatMessages({ messages }: ChatMessagesProps) {
   }, [messages]);
 
   return (
-    <ScrollArea className="h-[calc(100vh-12rem)]">
-      <div className="space-y-4 pb-4">
+    <ScrollArea className="flex-1">
+      <div className="divide-y divide-gray-800">
         {messages.length === 0 ? (
-          <div className="text-center text-muted-foreground pt-8">
+          <div className="text-center text-gray-400 py-8">
             Start a conversation by typing a message below.
           </div>
         ) : (
