@@ -13,6 +13,8 @@ interface SidebarProps {
   onSelectConversation: (id: string) => void;
 }
 
+
+
 const bottomNavItems = [
   { icon: Settings, label: "Settings", href: "#" },
   { icon: HelpCircle, label: "Help", href: "#" },
@@ -30,11 +32,11 @@ export function Sidebar({
       <div className="p-4">
         <Button
           onClick={onNewConversation}
-          className="w-full justify-start"
+          className="w-full justify-center"
           variant="secondary"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
-          New Conversation
+          Connect
         </Button>
       </div>
       

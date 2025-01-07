@@ -18,7 +18,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           <span className="text-white font-semibold">U</span>
         </div>
         <div className="flex-1">
-          <div className="text-sm text-white font-medium">{message.content}</div>
+          <div className="text-base text-white font-medium">{message.content}</div>
         </div>
         <div className="flex items-center gap-2">
           <button className="p-2 hover:bg-gray-800 rounded-lg">
@@ -36,7 +36,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           <span className="text-white font-semibold">A</span>
         </div>
         <div className="flex-1">
-          <div className="text-sm text-white">{message.content}</div>
+          <div className="text-base text-white font-medium">{message.content}</div>
         </div>
       </div>
       <div className="flex items-center gap-2 ml-[52px]">

@@ -8,10 +8,35 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { type Message, type Conversation } from "@/lib/types";
 
 export function ChatInterface() {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [conversations, setConversations] = useState<Conversation[]>([
+    {
+      id: nanoid(),
+      title: "Agent",
+      lastMessage: "New conversation",
+      timestamp: new Date(),
+      messages: [{
+        role: "assistant",
+        content: "I can help you send Transactions on starknet."
+      }]
+    },
+    {
+      id: nanoid(),
+      title: "Ekubo",
+      lastMessage: "New conversation",
+      timestamp: new Date(),
+      messages: [{
+        role: "assistant",
+        content: "You can ask me any on-chain data about Ekubo."
+      }]
+    },
+  ]);
+  const [activeConversationId, setActiveConversationId] = useState<
+    string | null
+  >(null);
 
-  const activeConversation = conversations.find((c) => c.id === activeConversationId);
+  const activeConversation = conversations.find(
+    (c) => c.id === activeConversationId
+  );
 
   const createNewConversation = () => {
     const newConversation: Conversation = {
@@ -33,7 +58,7 @@ export function ChatInterface() {
     }
 
     const userMessage: Message = { role: "user", content: content.trim() };
-    
+
     setConversations((prev) =>
       prev.map((conv) => {
         if (conv.id !== activeConversationId) return conv;
@@ -50,9 +75,10 @@ export function ChatInterface() {
     setTimeout(() => {
       const aiMessage: Message = {
         role: "assistant",
-        content: "This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.",
+        content:
+          "This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.",
       };
-      
+
       setConversations((prev) =>
         prev.map((conv) => {
           if (conv.id !== activeConversationId) return conv;
