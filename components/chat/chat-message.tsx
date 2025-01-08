@@ -1,15 +1,16 @@
 "use client";
 
-import { type Message } from "@/lib/types";
+import { Step, type Message } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ThumbsUp, ThumbsDown, Copy } from "lucide-react";
 
 interface ChatMessageProps {
   message: Message;
   enableComfirm: boolean;
+  // steps: Step[];
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, enableComfirm }: ChatMessageProps) {
   const isUser = message.role === "user";
   
   if (isUser) {
@@ -41,7 +42,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         </div>
       </div>
       <div className="flex items-center gap-2 ml-[52px]">
-        <button>Confirm</button>
+        {enableComfirm && <button>Confirm</button>}
         <button className="p-2 hover:bg-gray-800 rounded-lg">
           <ThumbsUp className="h-4 w-4 text-gray-400" />
         </button>

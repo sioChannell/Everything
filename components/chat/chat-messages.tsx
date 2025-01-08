@@ -7,9 +7,10 @@ import { ChatMessage } from "./chat-message";
 
 interface ChatMessagesProps {
   messages: Message[];
+  enableComfirmArray: boolean[];
 }
 
-export function ChatMessages({ messages }: ChatMessagesProps) {
+export function ChatMessages({ messages, enableComfirmArray }: ChatMessagesProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export function ChatMessages({ messages }: ChatMessagesProps) {
         ) : (
           <>
             {messages.map((message, index) => (
-              <ChatMessage key={index} message={message} />
+              <ChatMessage key={index} message={message} enableComfirm={enableComfirmArray[index]}/>
             ))}
             <div ref={scrollRef} />
           </>

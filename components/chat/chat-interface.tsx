@@ -44,6 +44,7 @@ export function ChatInterface() {
   );
 
   const { address } = useAccount();
+  const [enableComfirmArray, setEnableComfirmArray] = useState<boolean[]>([false]);
   // const [newResponse, setNewResponse] = useState<Message>();
 
   // const createNewConversation = () => {
@@ -79,26 +80,8 @@ export function ChatInterface() {
       })
     );
 
-    // Simulate AI response
-    // setTimeout(() => {
-    //   const aiMessage: Message = {
-    //     role: "brain",
-    //     content:
-    //       "This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.",
-    //   };
+    setEnableComfirmArray(prevArray => [...prevArray, false]);
 
-    //   setConversations((prev) =>
-    //     prev.map((conv) => {
-    //       if (conv.id !== activeConversationId) return conv;
-    //       return {
-    //         ...conv,
-    //         messages: [...conv.messages, aiMessage],
-    //         lastMessage: aiMessage.content,
-    //         timestamp: new Date(),
-    //       };
-    //     })
-    //   );
-    // }, 1000);
     const newResponse = await brainFetch(content);
 
     if (newResponse) {
@@ -138,19 +121,22 @@ export function ChatInterface() {
 
       const result: ApiResponse = await res.json();
       const brainHistroy = result.result[0].conversationHistory;
-      return brainHistroy[brainHistroy.length - 1];
 
-      // if (!res.ok) {
-      //   setEnableTransaction(false);
-      // } else {
-      //   if (result.result[0].type === "knowledge") {
-      //     setEnableTransaction(false);
-      //   } else {
-      //     setEnableTransaction(true);
-      //   }
-      // }
+      if (!res.ok) {
+        setEnableComfirmArray(prevArray => [...prevArray, false]);
+      } else {
+        if (result.result[0].type === "knowledge") {
+          setEnableComfirmArray(prevArray => [...prevArray, false]);
+        } else {
+          setEnableComfirmArray(prevArray => [...prevArray, true]);
+        }
+      }
+
+      return brainHistroy[brainHistroy.length - 1];
     } catch (error) {
       console.error("Error:", error);
+      setEnableComfirmArray(prevArray => [...prevArray, false]);
+
       return {
         role: "brain",
         content: "Something goes wrong with Brain API.",
@@ -168,7 +154,7 @@ export function ChatInterface() {
       />
       <main className="flex-1 flex flex-col p-4">
         <div className="flex-1 mb-4">
-          <ChatMessages messages={activeConversation?.messages ?? []} />
+          <ChatMessages messages={activeConversation?.messages ?? []} enableComfirmArray={enableComfirmArray}/>
         </div>
         <ChatInput onSendMessage={handleSendMessage} />
       </main>
