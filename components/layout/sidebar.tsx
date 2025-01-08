@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ConversationList } from "./conversation-list";
 import { type Conversation } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { WalletDialog } from "../ui/wallet-dialog";
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -12,8 +14,6 @@ interface SidebarProps {
   onNewConversation: () => void;
   onSelectConversation: (id: string) => void;
 }
-
-
 
 const bottomNavItems = [
   { icon: Settings, label: "Settings", href: "#" },
@@ -27,11 +27,13 @@ export function Sidebar({
   onNewConversation,
   onSelectConversation,
 }: SidebarProps) {
+  const [walletOpen, setWalletOpen] = useState(false);
+
   return (
     <div className="w-64 bg-card h-screen border-r border-border flex flex-col">
       <div className="p-4">
         <Button
-          onClick={onNewConversation}
+          onClick={() => setWalletOpen(true)}
           className="w-full justify-center"
           variant="secondary"
         >
@@ -39,7 +41,7 @@ export function Sidebar({
           Connect
         </Button>
       </div>
-      
+
       <div className="flex-1 overflow-hidden flex flex-col px-2">
         <div className="text-xs font-semibold text-muted-foreground px-3 py-2">
           Recent Conversations
@@ -69,6 +71,8 @@ export function Sidebar({
           ))}
         </nav>
       </div>
+
+      <WalletDialog open={walletOpen} onOpenChange={setWalletOpen} />
     </div>
   );
 }
