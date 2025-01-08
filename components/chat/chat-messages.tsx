@@ -2,15 +2,20 @@
 
 import { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { type Message } from "@/lib/types";
+import { Step, StepsArr, type Message } from "@/lib/types";
 import { ChatMessage } from "./chat-message";
 
 interface ChatMessagesProps {
   messages: Message[];
   enableComfirmArray: boolean[];
+  stepsArr: StepsArr[];
 }
 
-export function ChatMessages({ messages, enableComfirmArray }: ChatMessagesProps) {
+export function ChatMessages({
+  messages,
+  enableComfirmArray,
+  stepsArr,
+}: ChatMessagesProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,7 +34,12 @@ export function ChatMessages({ messages, enableComfirmArray }: ChatMessagesProps
         ) : (
           <>
             {messages.map((message, index) => (
-              <ChatMessage key={index} message={message} enableComfirm={enableComfirmArray[index]}/>
+              <ChatMessage
+                key={index}
+                message={message}
+                enableComfirm={enableComfirmArray[index]}
+                steps={stepsArr[index].steps}
+              />
             ))}
             <div ref={scrollRef} />
           </>

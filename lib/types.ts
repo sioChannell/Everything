@@ -76,3 +76,7 @@ interface ResultItem {
 export interface ApiResponse {
   result: ResultItem[];
 }
+
+export interface StepsArr{
+  steps: Step[];
+}

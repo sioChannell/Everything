@@ -5,7 +5,12 @@ import { nanoid } from "nanoid";
 import { ChatInput } from "./chat-input";
 import { ChatMessages } from "./chat-messages";
 import { Sidebar } from "@/components/layout/sidebar";
-import { type Message, type Conversation, ApiResponse } from "@/lib/types";
+import {
+  type Message,
+  type Conversation,
+  ApiResponse,
+  StepsArr,
+} from "@/lib/types";
 import { useAccount } from "@starknet-react/core";
 
 export function ChatInterface() {
@@ -44,7 +49,10 @@ export function ChatInterface() {
   );
 
   const { address } = useAccount();
-  const [enableComfirmArray, setEnableComfirmArray] = useState<boolean[]>([false]);
+  const [enableComfirmArray, setEnableComfirmArray] = useState<boolean[]>([
+    false,
+  ]);
+  const [stepsArr, setStepsArr] = useState<StepsArr[]>([{ steps: [] }]);
   // const [newResponse, setNewResponse] = useState<Message>();
 
   // const createNewConversation = () => {
@@ -80,7 +88,8 @@ export function ChatInterface() {
       })
     );
 
-    setEnableComfirmArray(prevArray => [...prevArray, false]);
+    setEnableComfirmArray((prevArray) => [...prevArray, false]);
+    setStepsArr((prevArray) => [...prevArray, {steps: []}]);
 
     const newResponse = await brainFetch(content);
 
@@ -123,20 +132,24 @@ export function ChatInterface() {
       const brainHistroy = result.result[0].conversationHistory;
 
       if (!res.ok) {
-        setEnableComfirmArray(prevArray => [...prevArray, false]);
+        setEnableComfirmArray((prevArray) => [...prevArray, false]);
+        setStepsArr((prevArray) => [...prevArray, {steps: []}]);
       } else {
         if (result.result[0].type === "knowledge") {
-          setEnableComfirmArray(prevArray => [...prevArray, false]);
+          setEnableComfirmArray((prevArray) => [...prevArray, false]);
+          setStepsArr((prevArray) => [...prevArray, {steps: []}]);
         } else {
-          setEnableComfirmArray(prevArray => [...prevArray, true]);
+          setEnableComfirmArray((prevArray) => [...prevArray, true]);
+          setStepsArr((prevArray) => [...prevArray, {steps: result.result[0].data.steps}]);
         }
       }
 
       return brainHistroy[brainHistroy.length - 1];
     } catch (error) {
       console.error("Error:", error);
-      setEnableComfirmArray(prevArray => [...prevArray, false]);
-
+      setEnableComfirmArray((prevArray) => [...prevArray, false]);
+      setStepsArr((prevArray) => [...prevArray, {steps: []}]);
+      
       return {
         role: "brain",
         content: "Something goes wrong with Brain API.",
@@ -154,7 +167,11 @@ export function ChatInterface() {
       />
       <main className="flex-1 flex flex-col p-4">
         <div className="flex-1 mb-4">
-          <ChatMessages messages={activeConversation?.messages ?? []} enableComfirmArray={enableComfirmArray}/>
+          <ChatMessages
+            messages={activeConversation?.messages ?? []}
+            enableComfirmArray={enableComfirmArray}
+            stepsArr={stepsArr}
+          />
         </div>
         <ChatInput onSendMessage={handleSendMessage} />
       </main>
