@@ -5,7 +5,8 @@ import { nanoid } from "nanoid";
 import { ChatInput } from "./chat-input";
 import { ChatMessages } from "./chat-messages";
 import { Sidebar } from "@/components/layout/sidebar";
-import { type Message, type Conversation } from "@/lib/types";
+import { type Message, type Conversation, ApiResponse } from "@/lib/types";
+import { useAccount } from "@starknet-react/core";
 
 export function ChatInterface() {
   const [conversations, setConversations] = useState<Conversation[]>([
@@ -16,7 +17,7 @@ export function ChatInterface() {
       timestamp: new Date(),
       messages: [
         {
-          role: "assistant",
+          role: "brain",
           content: "I can help you send Transactions on starknet.",
         },
       ],
@@ -28,7 +29,7 @@ export function ChatInterface() {
       timestamp: new Date(),
       messages: [
         {
-          role: "assistant",
+          role: "brain",
           content: "You can ask me any on-chain data about Ekubo.",
         },
       ],
@@ -41,6 +42,9 @@ export function ChatInterface() {
   const activeConversation = conversations.find(
     (c) => c.id === activeConversationId
   );
+
+  const { address } = useAccount();
+  // const [newResponse, setNewResponse] = useState<Message>();
 
   // const createNewConversation = () => {
   //   const newConversation: Conversation = {
@@ -55,7 +59,7 @@ export function ChatInterface() {
   //   setActiveConversationId(newConversation.id);
   // };
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     // if (!activeConversationId) {
     //   createNewConversation();
     //   return;
@@ -75,34 +79,49 @@ export function ChatInterface() {
       })
     );
 
-
-
     // Simulate AI response
-    setTimeout(() => {
-      const aiMessage: Message = {
-        role: "assistant",
-        content:
-          "This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.",
-      };
+    // setTimeout(() => {
+    //   const aiMessage: Message = {
+    //     role: "brain",
+    //     content:
+    //       "This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.This is a simulated AI response. In a real application, this would be connected to an AI service.",
+    //   };
 
+    //   setConversations((prev) =>
+    //     prev.map((conv) => {
+    //       if (conv.id !== activeConversationId) return conv;
+    //       return {
+    //         ...conv,
+    //         messages: [...conv.messages, aiMessage],
+    //         lastMessage: aiMessage.content,
+    //         timestamp: new Date(),
+    //       };
+    //     })
+    //   );
+    // }, 1000);
+    const newResponse = await brainFetch(content);
+
+    if (newResponse) {
       setConversations((prev) =>
         prev.map((conv) => {
           if (conv.id !== activeConversationId) return conv;
           return {
             ...conv,
-            messages: [...conv.messages, aiMessage],
-            lastMessage: aiMessage.content,
+            messages: [...conv.messages, newResponse],
+            lastMessage: newResponse.content,
             timestamp: new Date(),
           };
         })
       );
-    }, 1000);
+    }
   };
 
-  async function brainFetch() {
+  async function brainFetch(content: string): Promise<Message> {
     const API_URL = "https://api.brianknows.org/api/v0/agent";
     const API_KEY = "brian_ojVMQC3S7BqF7aXo2";
-    
+    const history = conversations[0].messages;
+    history.shift();
+
     try {
       const res = await fetch(API_URL, {
         method: "POST",
@@ -111,25 +130,31 @@ export function ChatInterface() {
           "x-brian-api-key": API_KEY || "",
         },
         body: JSON.stringify({
-          prompt: "swap 1 eth for strk on starknet",
+          prompt: content,
           address: address,
           messages: history,
         }),
       });
-      const result: ApiResponse = await res.json();
-      setResponse(result);
 
-      if (!res.ok) {
-        setEnableTransaction(false);
-      } else {
-        if (result.result[0].type === "knowledge") {
-          setEnableTransaction(false);
-        } else {
-          setEnableTransaction(true);
-        }
-      }
+      const result: ApiResponse = await res.json();
+      const brainHistroy = result.result[0].conversationHistory;
+      return brainHistroy[brainHistroy.length - 1];
+
+      // if (!res.ok) {
+      //   setEnableTransaction(false);
+      // } else {
+      //   if (result.result[0].type === "knowledge") {
+      //     setEnableTransaction(false);
+      //   } else {
+      //     setEnableTransaction(true);
+      //   }
+      // }
     } catch (error) {
       console.error("Error:", error);
+      return {
+        role: "brain",
+        content: "Something goes wrong with Brain API.",
+      };
     }
   }
 
