@@ -14,20 +14,24 @@ export function ChatInterface() {
       title: "Agent",
       lastMessage: "New conversation",
       timestamp: new Date(),
-      messages: [{
-        role: "assistant",
-        content: "I can help you send Transactions on starknet."
-      }]
+      messages: [
+        {
+          role: "assistant",
+          content: "I can help you send Transactions on starknet.",
+        },
+      ],
     },
     {
       id: nanoid(),
       title: "Ekubo",
       lastMessage: "New conversation",
       timestamp: new Date(),
-      messages: [{
-        role: "assistant",
-        content: "You can ask me any on-chain data about Ekubo."
-      }]
+      messages: [
+        {
+          role: "assistant",
+          content: "You can ask me any on-chain data about Ekubo.",
+        },
+      ],
     },
   ]);
   const [activeConversationId, setActiveConversationId] = useState<
@@ -38,24 +42,24 @@ export function ChatInterface() {
     (c) => c.id === activeConversationId
   );
 
-  const createNewConversation = () => {
-    const newConversation: Conversation = {
-      id: nanoid(),
-      title: `Conversation ${conversations.length + 1}`,
-      lastMessage: "New conversation",
-      timestamp: new Date(),
-      messages: [],
-    };
+  // const createNewConversation = () => {
+  //   const newConversation: Conversation = {
+  //     id: nanoid(),
+  //     title: `Conversation ${conversations.length + 1}`,
+  //     lastMessage: "New conversation",
+  //     timestamp: new Date(),
+  //     messages: [],
+  //   };
 
-    setConversations((prev) => [newConversation, ...prev]);
-    setActiveConversationId(newConversation.id);
-  };
+  //   setConversations((prev) => [newConversation, ...prev]);
+  //   setActiveConversationId(newConversation.id);
+  // };
 
   const handleSendMessage = (content: string) => {
-    if (!activeConversationId) {
-      createNewConversation();
-      return;
-    }
+    // if (!activeConversationId) {
+    //   createNewConversation();
+    //   return;
+    // }
 
     const userMessage: Message = { role: "user", content: content.trim() };
 
@@ -70,6 +74,8 @@ export function ChatInterface() {
         };
       })
     );
+
+
 
     // Simulate AI response
     setTimeout(() => {
@@ -93,12 +99,46 @@ export function ChatInterface() {
     }, 1000);
   };
 
+  async function brainFetch() {
+    const API_URL = "https://api.brianknows.org/api/v0/agent";
+    const API_KEY = "brian_ojVMQC3S7BqF7aXo2";
+    
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-brian-api-key": API_KEY || "",
+        },
+        body: JSON.stringify({
+          prompt: "swap 1 eth for strk on starknet",
+          address: address,
+          messages: history,
+        }),
+      });
+      const result: ApiResponse = await res.json();
+      setResponse(result);
+
+      if (!res.ok) {
+        setEnableTransaction(false);
+      } else {
+        if (result.result[0].type === "knowledge") {
+          setEnableTransaction(false);
+        } else {
+          setEnableTransaction(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar
         conversations={conversations}
         activeConversationId={activeConversationId}
-        onNewConversation={createNewConversation}
+        onNewConversation={() => {}}
         onSelectConversation={setActiveConversationId}
       />
       <main className="flex-1 flex flex-col p-4">

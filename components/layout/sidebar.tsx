@@ -7,6 +7,7 @@ import { type Conversation } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { WalletDialog } from "../ui/wallet-dialog";
+import { useAccount, useDisconnect } from "@starknet-react/core";
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -28,7 +29,9 @@ export function Sidebar({
   onSelectConversation,
 }: SidebarProps) {
   const [walletOpen, setWalletOpen] = useState(false);
-
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
+  
   return (
     <div className="w-64 bg-card h-screen border-r border-border flex flex-col">
       <div className="p-4">
@@ -38,13 +41,13 @@ export function Sidebar({
           variant="secondary"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
-          Connect
+          {address?`${address.slice(0, 6)}...${address.slice(-4)}`:"Connect"}
         </Button>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col px-2">
         <div className="text-xs font-semibold text-muted-foreground px-3 py-2">
-          Recent Conversations
+          Applications
         </div>
         <ConversationList
           conversations={conversations}
