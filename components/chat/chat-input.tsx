@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Send } from "lucide-react";
+import { useAccount } from "@starknet-react/core";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -9,6 +10,7 @@ interface ChatInputProps {
 
 export function ChatInput({ onSendMessage }: ChatInputProps) {
   const [input, setInput] = useState("");
+  const { address } = useAccount();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +33,9 @@ export function ChatInput({ onSendMessage }: ChatInputProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type your message..."
-          className="flex-1 bg-transparent border-0 focus:ring-0 resize-none text-white placeholder-gray-400 text-sm min-h-[40px] max-h-[120px] py-2 px-3"
+          placeholder={address?"Type your message...":"Please connect to your wallet first"}
+          className="flex-1 bg-transparent border-0 focus:ring-0 resize-none text-white placeholder-gray-400 text-base min-h-[40px] max-h-[120px] py-2 px-3"
+          disabled={!address}
         />
         <button
           type="submit"

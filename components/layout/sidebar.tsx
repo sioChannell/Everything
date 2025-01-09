@@ -31,17 +31,25 @@ export function Sidebar({
   const [walletOpen, setWalletOpen] = useState(false);
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
-  
+
   return (
     <div className="w-64 bg-card h-screen border-r border-border flex flex-col">
       <div className="p-4">
         <Button
-          onClick={() => setWalletOpen(true)}
+          onClick={() => {
+            if (address) {
+              disconnect();
+            } else {
+              setWalletOpen(true);
+            }
+          }}
           className="w-full justify-center"
           variant="secondary"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
-          {address?`${address.slice(0, 6)}...${address.slice(-4)}`:"Connect"}
+          {address
+            ? `${address.slice(0, 6)}...${address.slice(-4)}`
+            : "Connect"}
         </Button>
       </div>
 

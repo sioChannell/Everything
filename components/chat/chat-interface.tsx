@@ -43,7 +43,7 @@ export function ChatInterface() {
   ]);
   const [activeConversationId, setActiveConversationId] = useState<
     string | null
-  >(null);
+  >("0");
 
   const activeConversation = conversations.find(
     (c) => c.id === activeConversationId
@@ -80,7 +80,7 @@ export function ChatInterface() {
         role: "brain",
         content: await fetchGLM(content),
       };
-      
+
       setEnableComfirmArray((prevArray) => [...prevArray, false]);
       setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
     } else {
