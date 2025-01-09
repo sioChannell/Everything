@@ -3,6 +3,7 @@
 import { useWriteSync } from "@/hooks/useWriteSync";
 import { Step, type Message } from "@/lib/types";
 import { cn, processArguments } from "@/lib/utils";
+import { Button } from "@radix-ui/themes";
 import { useContract, useContractWrite } from "@starknet-react/core";
 import { ThumbsUp, ThumbsDown, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -59,11 +60,6 @@ export function ChatMessage({
             {message.content}
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-gray-800 rounded-lg">
-            <Copy className="h-4 w-4 text-gray-400" />
-          </button>
-        </div>
       </div>
     );
   }
@@ -83,7 +79,9 @@ export function ChatMessage({
       <div className="flex items-center gap-2 ml-[52px]">
         {enableComfirm && !calls && <span>Loading...</span>}
         {enableComfirm && (
-          <button
+          <Button
+            color="indigo"
+            variant="soft"
             onClick={async () => {
               try {
                 const result = await writeAsync();
@@ -93,14 +91,8 @@ export function ChatMessage({
             }}
           >
             Confirm
-          </button>
+          </Button>
         )}
-        <button className="p-2 hover:bg-gray-800 rounded-lg">
-          <ThumbsUp className="h-4 w-4 text-gray-400" />
-        </button>
-        <button className="p-2 hover:bg-gray-800 rounded-lg">
-          <ThumbsDown className="h-4 w-4 text-gray-400" />
-        </button>
         <button className="p-2 hover:bg-gray-800 rounded-lg">
           <Copy className="h-4 w-4 text-gray-400" />
         </button>

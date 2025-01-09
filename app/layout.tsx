@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { StarknetProvider } from "@/components/starknet/starknetprovider";
+import "@radix-ui/themes/styles.css";
+import { Theme } from "@radix-ui/themes";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -24,7 +27,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <StarknetProvider>{children}</StarknetProvider>
+          <Theme>
+            <StarknetProvider>{children}</StarknetProvider>
+          </Theme>
         </ThemeProvider>
       </body>
     </html>
