@@ -21,34 +21,16 @@ export function ChatMessage({
   steps,
 }: ChatMessageProps) {
   const isUser = message.role === "user";
-  const [abis, setAbis] = useState<Abi[]>([]);
-  useWriteSync({ steps, setAbis });
-
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
-  const currentStep = steps ? steps[currentStepIndex] : undefined;
-  const { contract } = useContract({
-    abi: abis[currentStepIndex],
-    address: currentStep?.contractAddress,
-  });
-  const args = currentStep
-    ? processArguments(
-        currentStep.calldata,
-        currentStep.entrypoint,
-        abis[currentStepIndex]
-      )
-    : [];
-  const calls = contract?.populateTransaction[
-    steps[currentStepIndex].entrypoint
-  ]!(...args);
+  const calls = useWriteSync({ steps, currentStepIndex });
   const { writeAsync } = useContractWrite({ calls });
 
-  useEffect(() => {
-    console.log("abis 发生了变化：", abis); // 在 abis 变化后执行
-    console.log(contract);
-    console.log(args);
-    console.log(calls);
-    // 在这里执行依赖于 abis 的操作
-  }, [abis]); // 依赖于 abis
+  // useEffect(() => {
+  //   if(currentStepIndex===0){
+  //     return;
+  //   }
+  // }, [currentStepIndex]);
+
   if (isUser) {
     return (
       <div className="flex items-center gap-3 p-4">
@@ -84,7 +66,10 @@ export function ChatMessage({
             variant="soft"
             onClick={async () => {
               try {
-                const result = await writeAsync();
+                await writeAsync();
+                if (currentStepIndex !== steps.length - 1) {
+                  setCurrentStepIndex(currentStepIndex + 1);
+                }
               } catch (error) {
                 console.error("Error writing contract:", error);
               }
