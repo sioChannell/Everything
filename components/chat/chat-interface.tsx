@@ -12,11 +12,12 @@ import {
   StepsArr,
 } from "@/lib/types";
 import { useAccount } from "@starknet-react/core";
+import { fetchGLM } from "@/lib/glm";
 
 export function ChatInterface() {
   const [conversations, setConversations] = useState<Conversation[]>([
     {
-      id: nanoid(),
+      id: "0",
       title: "Agent",
       lastMessage: "New conversation",
       timestamp: new Date(),
@@ -28,7 +29,7 @@ export function ChatInterface() {
       ],
     },
     {
-      id: nanoid(),
+      id: "1",
       title: "Ekubo",
       lastMessage: "New conversation",
       timestamp: new Date(),
@@ -53,27 +54,8 @@ export function ChatInterface() {
     false,
   ]);
   const [stepsArr, setStepsArr] = useState<StepsArr[]>([{ steps: [] }]);
-  // const [newResponse, setNewResponse] = useState<Message>();
-
-  // const createNewConversation = () => {
-  //   const newConversation: Conversation = {
-  //     id: nanoid(),
-  //     title: `Conversation ${conversations.length + 1}`,
-  //     lastMessage: "New conversation",
-  //     timestamp: new Date(),
-  //     messages: [],
-  //   };
-
-  //   setConversations((prev) => [newConversation, ...prev]);
-  //   setActiveConversationId(newConversation.id);
-  // };
 
   const handleSendMessage = async (content: string) => {
-    // if (!activeConversationId) {
-    //   createNewConversation();
-    //   return;
-    // }
-
     const userMessage: Message = { role: "user", content: content.trim() };
 
     setConversations((prev) =>
@@ -89,9 +71,21 @@ export function ChatInterface() {
     );
 
     setEnableComfirmArray((prevArray) => [...prevArray, false]);
-    setStepsArr((prevArray) => [...prevArray, {steps: []}]);
+    setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
 
-    const newResponse = await brainFetch(content);
+    let newResponse: Message | undefined = undefined;
+    if (activeConversationId === "1") {
+      console.log("Ekubo active");
+      newResponse = {
+        role: "brain",
+        content: await fetchGLM(content),
+      };
+      
+      setEnableComfirmArray((prevArray) => [...prevArray, false]);
+      setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
+    } else {
+      newResponse = await brainFetch(content);
+    }
 
     if (newResponse) {
       setConversations((prev) =>
@@ -133,14 +127,17 @@ export function ChatInterface() {
 
       if (!res.ok) {
         setEnableComfirmArray((prevArray) => [...prevArray, false]);
-        setStepsArr((prevArray) => [...prevArray, {steps: []}]);
+        setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
       } else {
         if (result.result[0].type === "knowledge") {
           setEnableComfirmArray((prevArray) => [...prevArray, false]);
-          setStepsArr((prevArray) => [...prevArray, {steps: []}]);
+          setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
         } else {
           setEnableComfirmArray((prevArray) => [...prevArray, true]);
-          setStepsArr((prevArray) => [...prevArray, {steps: result.result[0].data.steps}]);
+          setStepsArr((prevArray) => [
+            ...prevArray,
+            { steps: result.result[0].data.steps },
+          ]);
         }
       }
 
@@ -148,8 +145,8 @@ export function ChatInterface() {
     } catch (error) {
       console.error("Error:", error);
       setEnableComfirmArray((prevArray) => [...prevArray, false]);
-      setStepsArr((prevArray) => [...prevArray, {steps: []}]);
-      
+      setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
+
       return {
         role: "brain",
         content: "Something goes wrong with Brain API.",

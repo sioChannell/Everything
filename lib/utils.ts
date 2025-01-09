@@ -14,7 +14,7 @@ import { Abi } from "starknet";
  * @param functionName - 要匹配的 name 属性值
  * @returns - 匹配的对象或 undefined
  */
-function findByName(array: Abi, functionName: string): any | undefined {
+export function findByName(array: Abi, functionName: string): any | undefined {
   for (const item of array) {
     if (item.name == functionName) {
       console.log("success");
@@ -79,3 +79,5 @@ export function processArguments(
 
   return processedArgs;
 }
+
+
