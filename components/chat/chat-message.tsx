@@ -93,9 +93,6 @@ export function ChatMessage({
             Confirm
           </Button>
         )}
-        <button className="p-2 hover:bg-gray-800 rounded-lg">
-          <Copy className="h-4 w-4 text-gray-400" />
-        </button>
       </div>
     </div>
   );
