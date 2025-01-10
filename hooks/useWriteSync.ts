@@ -47,26 +47,27 @@ export function useWriteSync({ steps, currentStepIndex }: useWriteSyncProps) {
     }
   }, [provider, steps]);
 
-  const currentStep = steps ? steps[currentStepIndex] : undefined;
+  // const currentStep = steps ? steps[currentStepIndex] : undefined;
 
-  const { contract } = useContract({
-    abi: abis[currentStepIndex],
-    address: currentStep?.contractAddress,
-  });
+  // const { contract } = useContract({
+  //   abi: abis[currentStepIndex],
+  //   address: currentStep?.contractAddress,
+  // });
 
-  const args =
-    currentStep && abis[currentStepIndex]
-      ? processArguments(
-          currentStep.calldata,
-          currentStep.entrypoint,
-          abis[currentStepIndex]
-        )
-      : [];
+  // const args =
+  //   currentStep && abis[currentStepIndex]
+  //     ? processArguments(
+  //         currentStep.calldata,
+  //         currentStep.entrypoint,
+  //         abis[currentStepIndex]
+  //       )
+  //     : [];
 
-  const calls =
-    contract?.populateTransaction?.[steps[currentStepIndex]?.entrypoint]?.(
-      ...args
-    ) ?? [];
+  // const calls =
+  //   contract?.populateTransaction?.[steps[currentStepIndex]?.entrypoint]?.(
+  //     ...args
+  //   ) ?? [];
 
-  return calls;
+  // return calls;
+  return abis;
 }

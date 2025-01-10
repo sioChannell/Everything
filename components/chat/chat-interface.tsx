@@ -81,6 +81,8 @@ export function ChatInterface() {
         content: await fetchGLM(content),
       };
 
+      console.log(newResponse.content);
+
       setEnableComfirmArray((prevArray) => [...prevArray, false]);
       setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
     } else {

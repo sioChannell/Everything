@@ -8,7 +8,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useConnect } from "@starknet-react/core";
+import { useConnect, useAccount } from "@starknet-react/core";
+import { connect as getStarknetConnect } from "get-starknet";
+import { mainnet } from "@starknet-react/chains";
+import { constants } from "starknet";
 
 interface WalletDialogProps {
   open: boolean;
@@ -40,6 +43,29 @@ const wallets = [
 
 export function WalletDialog({ open, onOpenChange }: WalletDialogProps) {
   const { connect, connectors } = useConnect();
+  const { account } = useAccount();
+
+  const switchNetwork = async () => {
+    const wallet = await getStarknetConnect();
+    // chainId 例如 "SN_MAIN" 或 "SN_GOERLI"
+    if (wallet?.isConnected) {
+      const targetChainId = constants.StarknetChainId.SN_MAIN;
+      window.alert("success");
+
+      try {
+        // 请求切换链
+        await wallet.request({
+          type: "wallet_switchStarknetChain",
+          params: { chainId: targetChainId },
+        });
+        console.log(`成功切换到链ID: ${targetChainId}`);
+      } catch (error) {
+        console.error("切换链失败:", error);
+      }
+    } else {
+      console.error("钱包未连接");
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -50,22 +76,24 @@ export function WalletDialog({ open, onOpenChange }: WalletDialogProps) {
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-2 py-4">
-          {/* <div className="text-sm font-semibold text-gray-400 mb-4">Popular</div> */}
           {connectors.map((connector) => (
             <Button
               key={connector.name}
               variant="ghost"
               className="w-full justify-start h-14 px-4 hover:bg-gray-800"
-              onClick={() => {
+              onClick={async () => {
                 connect({ connector });
+                await switchNetwork();
                 onOpenChange(false);
               }}
             >
               <div className="h-8 w-8 rounded-full mr-3 bg-gray-800 flex items-center justify-center">
                 <Image
                   src={
-                    connector.name === "braavos" || connector.name === "Braavos"
+                    connector.name.toLocaleLowerCase() === "braavos"
                       ? "/braavos.png"
+                      : connector.name.toLocaleLowerCase() === "metamask"
+                      ? "/metamask.png"
                       : "/argent.png"
                   }
                   alt={connector.name}
@@ -76,8 +104,10 @@ export function WalletDialog({ open, onOpenChange }: WalletDialogProps) {
               </div>
               <div className="flex flex-col items-start">
                 <span className="text-xl text-white">
-                  {connector.name === "braavos" || connector.name === "Braavos"
+                  {connector.name.toLocaleLowerCase() === "braavos"
                     ? "Braavos"
+                    : connector.name.toLocaleLowerCase() === "metamask"
+                    ? "MetaMask"
                     : "Argent X"}
                 </span>
                 {/* {wallet.subtitle && (
