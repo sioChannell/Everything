@@ -27,33 +27,7 @@ export function ChatMessage({
   steps,
 }: ChatMessageProps) {
   const isUser = message.role === "user";
-  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
-  const abis = useWriteSync({ steps, currentStepIndex });
   const { account } = useAccount();
-  // const { writeAsync } = useContractWrite({ calls });
-
-  const executeMuli = async () => {
-    if (account) {
-      let executeArgs: executeArgs[] = [];
-
-      for (let i = 0; i < steps.length; i++) {
-        const currentStep = steps[i];
-        executeArgs.push({
-          contractAddress: currentStep.contractAddress,
-          entrypoint: currentStep.entrypoint,
-          calldata: CallData.compile(
-            processArguments(
-              currentStep.calldata,
-              currentStep.entrypoint,
-              abis[i]
-            )
-          ),
-        });
-      }
-
-      await account.execute(executeArgs);
-    }
-  };
 
   if (isUser) {
     return (
@@ -95,11 +69,6 @@ export function ChatMessage({
             variant="soft"
             onClick={async () => {
               try {
-                // await writeAsync();
-                // if (currentStepIndex !== steps.length - 1) {
-                //   setCurrentStepIndex(currentStepIndex + 1);
-                // }
-                // await executeMuli();
                 account?.execute(steps);
               } catch (error) {
                 console.error("Error writing contract:", error);
