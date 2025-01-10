@@ -1,3 +1,5 @@
+import { Calldata, Uint256 } from "starknet";
+
 export interface Message {
   role: "user" | "brain";
   content: string;
@@ -77,6 +79,16 @@ export interface ApiResponse {
   result: ResultItem[];
 }
 
-export interface StepsArr{
+export interface StepsArr {
   steps: Step[];
+}
+
+export interface executeCalldata {
+  [key: string]: string | Uint256;
+}
+
+export interface executeArgs {
+  contractAddress: string;
+  entrypoint: string;
+  calldata: Calldata;
 }

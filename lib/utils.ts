@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 import { cairo } from "starknet";
 import { Abi } from "starknet";
+import { executeCalldata } from "./types";
 
 /**
  * 递归检查数组及其嵌套数组中是否存在 name 属性等于 functionName 的对象
@@ -38,8 +39,8 @@ export function processArguments(
   arr: string[],
   functionName: string,
   abi: Abi
-): any[] {
-  if(!abi){
+): executeCalldata[] {
+  if (!abi) {
     return [];
   }
   const targetFunction = findByName(abi, functionName);
@@ -51,7 +52,7 @@ export function processArguments(
 
   while (arr.length !== targetFunction.inputs.length) {
     console.log(
-      `Incorrect number of arguments for function "${functionName}". Expected ${targetFunction.inputs.length}, but got ${arr.length}.`
+      `Incorrect number of arguments for function "${functionName}". Expected ${targetFunction.inputs.length}, but got ${arr.length}. args: ${arr}`
     );
 
     arr.pop();
@@ -59,6 +60,7 @@ export function processArguments(
 
   console.log(targetFunction);
   const processedArgs: any[] = [];
+  let calldataArray: executeCalldata[] = [];
 
   for (let i = 0; i < arr.length; i++) {
     const arg = arr[i];
@@ -68,16 +70,21 @@ export function processArguments(
       try {
         const uint = cairo.uint256(arg);
         processedArgs.push(uint);
+        calldataArray.push({
+          inputType: uint,
+        });
       } catch (error) {
         console.error(`Invalid u256 value: ${arg}`, error);
         return [];
       }
     } else {
       processedArgs.push(arg);
+      calldataArray.push({
+        inputType: arg,
+      });
     }
   }
 
-  return processedArgs;
+  // return processedArgs;
+  return calldataArray;
 }
-
-

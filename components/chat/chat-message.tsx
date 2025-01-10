@@ -1,7 +1,7 @@
 "use client";
 
 import { useWriteSync } from "@/hooks/useWriteSync";
-import { Step, type Message } from "@/lib/types";
+import { executeArgs, Step, type Message } from "@/lib/types";
 import { cn, processArguments } from "@/lib/utils";
 import { Button } from "@radix-ui/themes";
 import {
@@ -11,9 +11,9 @@ import {
 } from "@starknet-react/core";
 import { ThumbsUp, ThumbsDown, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Abi, CallData } from "starknet";
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'; 
+import { Abi, cairo, CallData } from "starknet";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatMessageProps {
   message: Message;
@@ -34,41 +34,24 @@ export function ChatMessage({
 
   const executeMuli = async () => {
     if (account) {
-      for(let i=0;i<steps.length;i++){
-        {
-          contractAddress: steps[i].contractAddress,
-          entrypoint: steps[i].entrypoint,
-          calldata: CallData.compile()
-        }
+      let executeArgs: executeArgs[] = [];
+
+      for (let i = 0; i < steps.length; i++) {
+        const currentStep = steps[i];
+        executeArgs.push({
+          contractAddress: currentStep.contractAddress,
+          entrypoint: currentStep.entrypoint,
+          calldata: CallData.compile(
+            processArguments(
+              currentStep.calldata,
+              currentStep.entrypoint,
+              abis[i]
+            )
+          ),
+        });
       }
 
-      processArguments(
-                currentStep.calldata,
-                currentStep.entrypoint,
-                abis[currentStepIndex]
-              )
-
-      const multiCall = await account.execute([
-        // Calling the first contract
-        {
-          contractAddress: contractAddress_1,
-          entrypoint: "approve",
-          // approve 1 wei for bridge
-          calldata: CallData.compile({
-            spender: contractAddress_2,
-            amount: cairo.uint256(1),
-          }),
-        },
-        // Calling the second contract
-        {
-          contractAddress: contractAddress_2,
-          entrypoint: "transfer_ether",
-          // transfer 1 wei to the contract address
-          calldata: CallData.compile({
-            amount: cairo.uint256(1),
-          }),
-        },
-      ]);
+      await account.execute(executeArgs);
     }
   };
 
@@ -95,7 +78,12 @@ export function ChatMessage({
         </div>
         <div className="flex-1">
           <div className="text-base text-white font-medium">
-          <ReactMarkdown className="prose max-w-none" remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+            <ReactMarkdown
+              className="prose max-w-none"
+              remarkPlugins={[remarkGfm]}
+            >
+              {message.content}
+            </ReactMarkdown>
           </div>
         </div>
       </div>
@@ -111,6 +99,8 @@ export function ChatMessage({
                 // if (currentStepIndex !== steps.length - 1) {
                 //   setCurrentStepIndex(currentStepIndex + 1);
                 // }
+                // await executeMuli();
+                account?.execute(steps);
               } catch (error) {
                 console.error("Error writing contract:", error);
               }

@@ -1,3 +1,4 @@
+import { avnu } from "@/abis/avnu";
 import { Step } from "@/lib/types";
 import { processArguments } from "@/lib/utils";
 import {
@@ -22,8 +23,19 @@ export function useWriteSync({ steps, currentStepIndex }: useWriteSyncProps) {
       try {
         const fetchedAbis = await Promise.all(
           steps.map(async (step) => {
+            if (
+              step.contractAddress ===
+                "0x04270219d365d6b017231b52e92b3fb5d7c8378b05e9abc97724537a80e93b0f" ||
+              step.contractAddress ===
+                "0x4270219d365d6b017231b52e92b3fb5d7c8378b05e9abc97724537a80e93b0f"
+            ) {
+              return avnu;
+            }
+            
             const fetchedAbi = await provider.getClassAt(step.contractAddress);
             if (fetchedAbi && fetchedAbi.abi) {
+              console.log(step.contractAddress);
+              console.log(fetchedAbi.abi);
               return fetchedAbi.abi;
             } else {
               console.warn(
