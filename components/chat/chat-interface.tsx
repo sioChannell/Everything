@@ -114,7 +114,7 @@ export function ChatInterface() {
 
   async function brainFetch(content: string): Promise<Message> {
     const API_URL = "https://api.brianknows.org/api/v0/agent";
-    const API_KEY = "brian_ojVMQC3S7BqF7aXo2";
+    const API_KEY = process.env.NEXT_PUBLIC_BRAIN_API_KEY;
     const history = conversations[0].messages;
     history.shift();
 

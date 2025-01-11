@@ -54,8 +54,8 @@ interface ChatCompletionResponse {
   };
 }
 
-const API_KEY = "a2e51fc07a0204467b3552ca20434678.u7NzPxVbgS2l8s5L"; // 替换成你的实际 API 密钥
-const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+const API_KEY = process.env.NEXT_PUBLIC_MODEL_API_KEY; // 替换成你的实际 API 密钥
+const API_URL = process.env.NEXT_PUBLIC_MODEL_API_URL || "";
 
 async function callGLM4Plus(
   messages: ChatCompletionRequestMessage[]

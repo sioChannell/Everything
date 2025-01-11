@@ -83,7 +83,7 @@ export function WalletDialog({ open, onOpenChange }: WalletDialogProps) {
               className="w-full justify-start h-14 px-4 hover:bg-gray-800"
               onClick={async () => {
                 connect({ connector });
-                await switchNetwork();
+                // await switchNetwork();
                 onOpenChange(false);
               }}
             >
