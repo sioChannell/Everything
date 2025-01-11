@@ -53,8 +53,17 @@ export function ChatMessage({
         <div className="flex-1">
           <div className="text-base text-white font-medium">
             <ReactMarkdown
-              className="prose max-w-none"
+              className="prose max-w-none  prose-invert leading-6"
               remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ href, children }) => (
+                  <a href={href} target="_blank" rel="noopener noreferrer">
+                    {" "}
+                    {/* 添加 target 和 rel */}
+                    {children}
+                  </a>
+                ),
+              }}
             >
               {message.content}
             </ReactMarkdown>
