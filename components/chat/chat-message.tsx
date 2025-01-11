@@ -57,13 +57,11 @@ export function ChatMessage({
               remarkPlugins={[remarkGfm]}
               components={{
                 a: ({ href, children }) => (
-                  <a href={href} target="_blank" rel="noopener noreferrer">
-                    {" "}
-                    {/* 添加 target 和 rel */}
-                    {children}
-                  </a>
+                    <a href={href} target="_blank" rel="noopener noreferrer"> {/* 添加 target 和 rel */}
+                        {children}
+                    </a>
                 ),
-              }}
+            }}
             >
               {message.content}
             </ReactMarkdown>
