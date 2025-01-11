@@ -1,8 +1,9 @@
 import { Calldata, Uint256 } from "starknet";
 
 export interface Message {
-  role: "user" | "brain";
+  role: "user" | "brain" | "brian";
   content: string;
+  sender: "user" | "brain" | "brian";
 }
 
 export interface Conversation {
@@ -91,4 +92,14 @@ export interface executeArgs {
   contractAddress: string;
   entrypoint: string;
   calldata: Calldata;
+}
+
+export interface Knowledge {
+  result: [
+    {
+      answer: string;
+      type: string;
+      conversationHistory: Message[];
+    }
+  ];
 }

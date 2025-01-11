@@ -10,6 +10,7 @@ import {
   type Conversation,
   ApiResponse,
   StepsArr,
+  Knowledge,
 } from "@/lib/types";
 import { useAccount } from "@starknet-react/core";
 import { fetchGLM } from "@/lib/glm";
@@ -25,6 +26,7 @@ export function ChatInterface() {
         {
           role: "brain",
           content: "I can help you send Transactions on starknet.",
+          sender: "brain",
         },
       ],
     },
@@ -37,6 +39,7 @@ export function ChatInterface() {
         {
           role: "brain",
           content: "You can ask me any on-chain data about Ekubo.",
+          sender: "brain",
         },
       ],
     },
@@ -56,7 +59,11 @@ export function ChatInterface() {
   const [stepsArr, setStepsArr] = useState<StepsArr[]>([{ steps: [] }]);
 
   const handleSendMessage = async (content: string) => {
-    const userMessage: Message = { role: "user", content: content.trim() };
+    const userMessage: Message = {
+      role: "user",
+      content: content.trim(),
+      sender: "user",
+    };
 
     setConversations((prev) =>
       prev.map((conv) => {
@@ -79,6 +86,7 @@ export function ChatInterface() {
       newResponse = {
         role: "brain",
         content: await fetchGLM(content),
+        sender: "brain",
       };
 
       console.log(newResponse.content);
@@ -124,21 +132,34 @@ export function ChatInterface() {
         }),
       });
 
-      const result: ApiResponse = await res.json();
+      const result: ApiResponse | Knowledge = await res.json();
       const brainHistroy = result.result[0].conversationHistory;
 
+      // !res.ok 不是2XX
       if (!res.ok) {
         setEnableComfirmArray((prevArray) => [...prevArray, false]);
         setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
+
+        return {
+          role: "brain",
+          content: "Something goes wrong with Brain API.",
+          sender: "brian",
+        };
       } else {
         if (result.result[0].type === "knowledge") {
           setEnableComfirmArray((prevArray) => [...prevArray, false]);
           setStepsArr((prevArray) => [...prevArray, { steps: [] }]);
+
+          return {
+            role: "brain",
+            sender: "brian",
+            content: (result as Knowledge).result[0].answer,
+          };
         } else {
           setEnableComfirmArray((prevArray) => [...prevArray, true]);
           setStepsArr((prevArray) => [
             ...prevArray,
-            { steps: result.result[0].data.steps },
+            { steps: (result as ApiResponse).result[0].data.steps },
           ]);
         }
       }
@@ -152,6 +173,7 @@ export function ChatInterface() {
       return {
         role: "brain",
         content: "Something goes wrong with Brain API.",
+        sender: "brian",
       };
     }
   }
