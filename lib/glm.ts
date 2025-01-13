@@ -54,17 +54,15 @@ interface ChatCompletionResponse {
   };
 }
 
-// const API_KEY = process.env.NEXT_PUBLIC_MODEL_API_KEY; // 替换成你的实际 API 密钥
-// const API_URL = process.env.NEXT_PUBLIC_MODEL_API_URL || "";
-// const MODEL_NAME = process.env.NEXT_PUBLIC_MODEL_NAME || "";
-const API_KEY = "a2e51fc07a0204467b3552ca20434678.u7NzPxVbgS2l8s5L"; // 替换成你的实际 API 密钥
-const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+const API_KEY = process.env.NEXT_PUBLIC_MODEL_API_KEY; // 替换成你的实际 API 密钥
+const API_URL = process.env.NEXT_PUBLIC_MODEL_API_URL || "";
+const MODEL_NAME = process.env.NEXT_PUBLIC_MODEL_NAME || "";
 
 async function callGLM4Plus(
   messages: ChatCompletionRequestMessage[]
 ): Promise<ChatCompletionResponse | null> {
   const requestBody: ChatCompletionRequest = {
-    model: "glm-4-plus", // 指定模型
+    model: MODEL_NAME, // 指定模型
     messages: messages,
     temperature: 0.7, // 可选参数
   };
