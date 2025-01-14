@@ -1,5 +1,5 @@
 # Everything
-该demo基于brainknows API和openAPI开发。页面拥有两个聊天窗口，“Agent”和“Ekubo”。
+该demo基于brainknows API和Ekubo开发。页面拥有两个聊天窗口，“Agent”和“Ekubo”。
 
 在“Agent”聊天窗口，你可以询问Web3相关资料，比如“What is Uniswap”，也可以要求发起交易，比如“swap 1 eth for strk on starknet”。详细内容请参考[Brainknows Documentation](https://docs.brianknows.org/)。
 

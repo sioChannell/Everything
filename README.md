@@ -1,7 +1,7 @@
 # Everything
 - zh_CN [简体中文](README.zh_CN.md)
 
-This demo is developed based on the Brainknows API and OpenAPI. The page has two chat windows: "Agent" and "Ekubo."
+This demo is developed based on the Brainknows API and Ekubo. The page has two chat windows: "Agent" and "Ekubo."
 
 In the "Agent" chat window, you can ask for Web3-related information, such as "What is Uniswap?" or request to initiate transactions, such as "swap 1 eth for strk on Starknet." For more details, please refer to [Brainknows Documentation](https://docs.brianknows.org/).
 
